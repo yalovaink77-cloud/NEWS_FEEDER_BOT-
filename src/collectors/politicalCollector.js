@@ -1,11 +1,13 @@
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Reuters DNS dead, Guardian Politics(/international)=404; replaced.
 const POLITICAL_FEEDS = [
-    { source: 'Reuters Politics', url: 'https://feeds.reuters.com/reuters/politicsNews',           source_weight: 0.30 },
-    { source: 'BBC Politics',     url: 'http://feeds.bbci.co.uk/news/politics/rss.xml',            source_weight: 0.25 },
-    { source: 'Guardian Politics', url: 'https://www.theguardian.com/international/politics/rss', source_weight: 0.20 },
-    { source: 'CNN Politics',     url: 'http://rss.cnn.com/rss/cnn_allpolitics.rss',               source_weight: 0.15 },
+    { source: 'NYT Politics',     url: 'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',  source_weight: 0.30 },
+    { source: 'BBC Politics',     url: 'http://feeds.bbci.co.uk/news/politics/rss.xml',               source_weight: 0.25 },
+    { source: 'Guardian Politics', url: 'https://www.theguardian.com/politics/rss',                  source_weight: 0.20 },
+    { source: 'CNN Politics',     url: 'http://rss.cnn.com/rss/cnn_allpolitics.rss',                 source_weight: 0.15 },
+    { source: 'FT World',         url: 'https://www.ft.com/world?format=rss',                        source_weight: 0.18 },
 ];
 
 function detectPoliticalEventType(title) {

@@ -1,12 +1,13 @@
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Reuters DNS dead, AP Breaking=404; replaced.
 const SECURITY_FEEDS = [
-    { source: 'Reuters Security', url: 'https://feeds.reuters.com/reuters/worldNews',     source_weight: 0.30 },
-    { source: 'BBC Breaking',     url: 'http://feeds.bbci.co.uk/news/rss.xml',            source_weight: 0.25 },
-    { source: 'AP Breaking',      url: 'https://apnews.com/ap_feeds/TopNews',             source_weight: 0.25 },
-    { source: 'CNN Breaking',     url: 'http://rss.cnn.com/rss/cnn_topstories.rss',       source_weight: 0.15 },
-    { source: 'Guardian World',   url: 'https://www.theguardian.com/world/rss',           source_weight: 0.15 },
+    { source: 'NYT World',      url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml', source_weight: 0.28 },
+    { source: 'BBC Breaking',   url: 'http://feeds.bbci.co.uk/news/rss.xml',                   source_weight: 0.25 },
+    { source: 'CNN Breaking',   url: 'http://rss.cnn.com/rss/cnn_topstories.rss',              source_weight: 0.18 },
+    { source: 'Guardian World', url: 'https://www.theguardian.com/world/rss',                  source_weight: 0.18 },
+
 ];
 
 function detectSecurityEventType(title) {

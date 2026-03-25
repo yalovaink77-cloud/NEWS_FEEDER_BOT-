@@ -2,11 +2,11 @@ const axios = require('axios');
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Bloomberg Energy=404, EIA=406; using reliable alternatives.
 const ENERGY_FEEDS = [
-    { source: 'OPEC',           url: 'https://www.opec.org/news/rss/',                              source_weight: 0.40 },
-    { source: 'EIA',            url: 'https://www.eia.gov/rss/news.xml',                           source_weight: 0.35 },
-    { source: 'Reuters Energy', url: 'https://feeds.reuters.com/reuters/businessNews',             source_weight: 0.30 },
-    { source: 'Oil Price',      url: 'https://oilprice.com/rss/news/',                             source_weight: 0.25 },
+    { source: 'Yahoo Finance', url: 'https://finance.yahoo.com/news/rssindex',    source_weight: 0.25 },
+    { source: 'FT Energy',     url: 'https://www.ft.com/energy?format=rss',       source_weight: 0.30 },
+    { source: 'Bloomberg Mkt', url: 'https://feeds.bloomberg.com/markets/news.rss', source_weight: 0.28 },
 ];
 
 function detectEnergyEventType(title) {
@@ -54,28 +54,8 @@ async function fetchEnergyFeed(feed) {
 
 async function getEnergyNews() {
     console.log('Collecting Energy News...');
-    const [feedResults, oilPrice] = await Promise.all([
-        Promise.all(ENERGY_FEEDS.map(fetchEnergyFeed)),
-        getOilPrice(),
-    ]);
-
-    const articles = feedResults.flat();
-
-    if (oilPrice) {
-        articles.push({
-            source:        'OilPriceAPI',
-            title:         `Brent Crude Oil Price Update`,
-            content:       JSON.stringify(oilPrice),
-            url:           'https://api.oilpriceapi.com',
-            published_at:  new Date().toISOString(),
-            source_weight: 0.35,
-            category:      'energy',
-            event_type:    'price_update',
-            raw_data:      { asset: 'brent_crude', price: oilPrice },
-        });
-    }
-
-    return articles;
+    const feedResults = await Promise.all(ENERGY_FEEDS.map(fetchEnergyFeed));
+    return feedResults.flat();
 }
 
 module.exports = { getEnergyNews };

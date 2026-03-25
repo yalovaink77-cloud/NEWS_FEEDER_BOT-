@@ -2,10 +2,11 @@ const axios = require('axios');
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Kitco=404, Mining.com=403; replaced.
 const COMMODITY_FEEDS = [
-    { source: 'Commodity.com', url: 'https://www.commodity.com/rss/',     source_weight: 0.20 },
-    { source: 'Kitco',         url: 'https://www.kitco.com/rss/news.html', source_weight: 0.25 },
-    { source: 'Mining.com',    url: 'https://www.mining.com/feed/',        source_weight: 0.15 },
+    { source: 'Commodity.com',   url: 'https://www.commodity.com/rss/',                        source_weight: 0.20 },
+    { source: 'Investing Gold',  url: 'https://www.investing.com/rss/news_14.rss',             source_weight: 0.25 },
+    { source: 'Bloomberg Mkt',   url: 'https://feeds.bloomberg.com/markets/news.rss',          source_weight: 0.22 },
 ];
 
 async function getGoldPrice() {
@@ -42,29 +43,8 @@ async function fetchCommodityFeed(feed) {
 
 async function getCommoditiesNews() {
     console.log('Collecting Commodities News...');
-    const [feedResults, goldPrice] = await Promise.all([
-        Promise.all(COMMODITY_FEEDS.map(fetchCommodityFeed)),
-        getGoldPrice(),
-    ]);
-
-    const articles = feedResults.flat();
-
-    // Add a synthetic gold price article if price data is available
-    if (goldPrice) {
-        articles.push({
-            source:        'Metals.Live API',
-            title:         'Gold Spot Price Update',
-            content:       typeof goldPrice === 'object' ? JSON.stringify(goldPrice) : String(goldPrice),
-            url:           'https://api.metals.live/v1/spot/gold',
-            published_at:  new Date().toISOString(),
-            source_weight: 0.30,
-            category:      'commodity',
-            event_type:    'price_update',
-            raw_data:      { asset: 'gold', price: goldPrice },
-        });
-    }
-
-    return articles;
+    const feedResults = await Promise.all(COMMODITY_FEEDS.map(fetchCommodityFeed));
+    return feedResults.flat();
 }
 
 module.exports = { getCommoditiesNews };

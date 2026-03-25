@@ -1,12 +1,12 @@
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Reuters DNS dead, AP World=404, UNIAN=404; replaced.
 const GEO_FEEDS = [
-    { source: 'Reuters World',  url: 'https://feeds.reuters.com/reuters/worldnews', source_weight: 0.30 },
-    { source: 'BBC World',      url: 'http://feeds.bbci.co.uk/news/world/rss.xml',  source_weight: 0.25 },
-    { source: 'AP World',       url: 'https://apnews.com/rss/world',                source_weight: 0.25 },
-    { source: 'Al Jazeera',     url: 'https://www.aljazeera.com/xml/rss/all.xml',   source_weight: 0.20 },
-    { source: 'UNIAN',          url: 'https://www.unian.info/rss/world',             source_weight: 0.10 },
+    { source: 'NYT World',  url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml', source_weight: 0.30 },
+    { source: 'BBC World',  url: 'http://feeds.bbci.co.uk/news/world/rss.xml',               source_weight: 0.25 },
+    { source: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml',                source_weight: 0.20 },
+    { source: 'FT World',   url: 'https://www.ft.com/world?format=rss',                      source_weight: 0.20 },
 ];
 
 function detectGeoEventType(title) {

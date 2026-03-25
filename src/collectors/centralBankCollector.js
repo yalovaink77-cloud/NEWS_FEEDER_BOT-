@@ -2,12 +2,12 @@ const Parser = require('rss-parser');
 const parser = new Parser();
 
 // Central bank RSS feeds — critical weight for BIST (CBRT decisions move Turkish markets most)
+// Verified working as of 2026-03-25. ECB/CBRT/BoJ RSS endpoints are 404; replaced with alternatives.
 const CB_FEEDS = [
-    { source: 'Federal Reserve', url: 'https://www.federalreserve.gov/feeds/news.xml',                                                                               source_weight: 0.40 },
-    { source: 'ECB',             url: 'https://www.ecb.europa.eu/rss/pressreleases_en.xml',                                                                          source_weight: 0.35 },
-    { source: 'CBRT',            url: 'https://www.tcmb.gov.tr/wps/wcm/connect/EN/TCMB+EN/Main+Menu/Announcements/Press+Releases/rss.xml',                           source_weight: 0.55 },
-    { source: 'Bank of England', url: 'https://www.bankofengland.co.uk/.feed/rss/news.xml',                                                                          source_weight: 0.30 },
-    { source: 'Bank of Japan',   url: 'https://www.boj.or.jp/en/rss/news_en.xml',                                                                                    source_weight: 0.25 },
+    { source: 'Federal Reserve',           url: 'https://www.federalreserve.gov/feeds/press_all.xml',         source_weight: 0.40 },
+    { source: 'Bank of England Speeches',  url: 'https://www.bankofengland.co.uk/rss/speeches',               source_weight: 0.30 },
+    { source: 'Bank of England Research',  url: 'https://www.bankofengland.co.uk/rss/publications',           source_weight: 0.27 },
+    { source: 'Bloomberg Economics',       url: 'https://feeds.bloomberg.com/economics/news.rss',             source_weight: 0.30 },
 ];
 
 function detectCBEventType(title) {

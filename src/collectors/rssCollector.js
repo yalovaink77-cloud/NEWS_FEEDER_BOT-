@@ -2,22 +2,23 @@ const Parser = require('rss-parser');
 const parser = new Parser();
 
 // Turkish-focused market feeds — highest weight for BIST analysis
+// Note: KAP (kap.org.tr) RSS endpoint returns 404 as of 2025; replaced with
+// Turkish financial news aggregates that cover BIST disclosures.
 const FEEDS = [
-    {
-        source: 'KAP',
-        // TR URL is the stable endpoint; EN URL (/en/rss) has returned 404 historically
-        url: 'https://www.kap.org.tr/tr/rss/bildirim',
-        category: 'turkish_market',
-        event_type: 'disclosure',
-        source_weight: 0.35,
-        language: 'tr',
-    },
     {
         source: 'Bloomberg HT',
         url: 'https://www.bloomberght.com/rss',
         category: 'turkish_market',
         event_type: 'news',
-        source_weight: 0.20,
+        source_weight: 0.25,
+        language: 'tr',
+    },
+    {
+        source: 'Anadolu Agency TR',
+        url: 'https://www.aa.com.tr/tr/rss/default?cat=ekonomi',
+        category: 'turkish_market',
+        event_type: 'news',
+        source_weight: 0.25,
         language: 'tr',
     },
     {
@@ -27,6 +28,30 @@ const FEEDS = [
         event_type: 'news',
         source_weight: 0.20,
         language: 'en',
+    },
+    {
+        source: 'Haberturk Ekonomi',
+        url: 'https://www.haberturk.com/rss/ekonomi.xml',
+        category: 'turkish_market',
+        event_type: 'news',
+        source_weight: 0.20,
+        language: 'tr',
+    },
+    {
+        source: 'NTV Ekonomi',
+        url: 'https://www.ntv.com.tr/ekonomi.rss',
+        category: 'turkish_market',
+        event_type: 'news',
+        source_weight: 0.18,
+        language: 'tr',
+    },
+    {
+        source: 'Dunya Gazetesi',
+        url: 'https://www.dunya.com/rss/ekonomi.xml',
+        category: 'turkish_market',
+        event_type: 'news',
+        source_weight: 0.20,
+        language: 'tr',
     },
 ];
 

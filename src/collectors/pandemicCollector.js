@@ -1,11 +1,11 @@
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. WHO DON=404, CDC=broken XML, Reuters DNS dead; replaced.
 const PANDEMIC_FEEDS = [
-    { source: 'WHO',           url: 'https://www.who.int/feeds/entity/csr/don/en/feed/', source_weight: 0.40 },
-    { source: 'CDC',           url: 'https://tools.cdc.gov/podcasts/rss.asp?feedid=133', source_weight: 0.35 },
-    { source: 'Reuters Health', url: 'https://feeds.reuters.com/reuters/healthNews',     source_weight: 0.25 },
-    { source: 'BBC Health',    url: 'http://feeds.bbci.co.uk/news/health/rss.xml',       source_weight: 0.20 },
+    { source: 'WHO',        url: 'https://www.who.int/rss-feeds/news-english.xml',  source_weight: 0.40 },
+    { source: 'BBC Health', url: 'http://feeds.bbci.co.uk/news/health/rss.xml',     source_weight: 0.25 },
+    { source: 'NYT Health', url: 'https://rss.nytimes.com/services/xml/rss/nyt/Health.xml', source_weight: 0.20 },
 ];
 
 function detectPandemicEventType(title) {

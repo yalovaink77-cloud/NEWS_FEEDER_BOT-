@@ -2,10 +2,11 @@ const axios = require('axios');
 const Parser = require('rss-parser');
 const parser = new Parser();
 
-// Significant earthquakes of last 30 days (M2.5+ globally)
-const USGS_URL  = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson';
-const EMSC_URL  = 'https://www.emsc-csem.org/service/rss/rss.php?limit=20';
-const NOAA_URL  = 'https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/rss.xml';
+// Significant earthquakes of last 30 days
+// EMSC old RSS = 404; replaced with SeismicPortal. NOAA climate series = 404; replaced with NHC.
+const USGS_URL       = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson';
+const SEISMIC_URL    = 'https://seismicportal.eu/fdsnws/event/1/query?format=text&limit=20&minmag=4.5';
+const NOAA_URL       = 'https://www.nhc.noaa.gov/index-at.xml';
 
 async function getUSGSEarthquakes() {
     try {
@@ -38,23 +39,33 @@ async function getUSGSEarthquakes() {
     }
 }
 
-async function getEMSCEarthquakes() {
+async function getSeismicPortalEarthquakes() {
     try {
-        const result = await parser.parseURL(EMSC_URL);
-        console.log(`✓ EMSC: ${result.items.length} items`);
-        return result.items.map(item => ({
-            source:        'EMSC',
-            title:         item.title || '',
-            content:       item.contentSnippet || item.summary || '',
-            url:           item.link || EMSC_URL,
-            published_at:  item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-            source_weight: 0.30,
-            category:      'disaster',
-            event_type:    'earthquake',
-            raw_data:      null,
-        }));
+        const response = await axios.get(SEISMIC_URL, { timeout: 10000 });
+        const lines = response.data.split('\n').filter(l => l && !l.startsWith('#'));
+        const articles = lines.map(line => {
+            const cols = line.split('|');
+            // format: EventID|Time|Lat|Lon|Depth|Author|Catalog|Contributor|...|MagType|Mag|MagAuthor|Location
+            const time     = cols[1]?.trim();
+            const mag      = parseFloat(cols[10]?.trim()) || 0;
+            const location = cols[12]?.trim() || 'unknown';
+            if (!time || mag < 4.5) return null;
+            return {
+                source:        'SeismicPortal',
+                title:         `Earthquake M${mag.toFixed(1)} - ${location}`,
+                content:       `Magnitude ${mag.toFixed(1)} earthquake near ${location}.`,
+                url:           'https://seismicportal.eu',
+                published_at:  new Date(time).toISOString(),
+                source_weight: mag >= 6.0 ? 0.50 : mag >= 5.0 ? 0.35 : 0.20,
+                category:      'disaster',
+                event_type:    'earthquake',
+                raw_data:      { magnitude: mag, location },
+            };
+        }).filter(Boolean);
+        console.log(`✓ SeismicPortal: ${articles.length} earthquakes`);
+        return articles;
     } catch (error) {
-        console.error('✗ EMSC error:', error.message);
+        console.error('✗ SeismicPortal error:', error.message);
         return [];
     }
 }
@@ -82,12 +93,12 @@ async function getNOAAWeather() {
 
 async function getNaturalDisasters() {
     console.log('Collecting Natural Disasters...');
-    const [usgs, emsc, noaa] = await Promise.all([
+    const [usgs, seismic, noaa] = await Promise.all([
         getUSGSEarthquakes(),
-        getEMSCEarthquakes(),
+        getSeismicPortalEarthquakes(),
         getNOAAWeather(),
     ]);
-    return [...usgs, ...emsc, ...noaa];
+    return [...usgs, ...seismic, ...noaa];
 }
 
 module.exports = { getNaturalDisasters };

@@ -1,12 +1,15 @@
 const Parser = require('rss-parser');
 const parser = new Parser();
 
+// Verified working as of 2026-03-25. Reuters DNS dead, Trading Economics=403; replaced.
 const MACRO_FEEDS = [
-    { source: 'Trading Economics', url: 'https://tradingeconomics.com/rss/',                    source_weight: 0.30 },
-    { source: 'Investing.com',     url: 'https://www.investing.com/rss/news_25.rss',            source_weight: 0.25 },
-    { source: 'Reuters Business',  url: 'https://feeds.reuters.com/reuters/businessNews',       source_weight: 0.25 },
-    { source: 'BBC Business',      url: 'http://feeds.bbci.co.uk/news/business/rss.xml',        source_weight: 0.20 },
-    { source: 'MarketWatch',       url: 'https://feeds.marketwatch.com/marketwatch/topstories/', source_weight: 0.20 },
+    { source: 'Bloomberg Markets', url: 'https://feeds.bloomberg.com/markets/news.rss',              source_weight: 0.30 },
+    { source: 'NYT Business',      url: 'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', source_weight: 0.25 },
+    { source: 'Investing.com',     url: 'https://www.investing.com/rss/news_25.rss',                 source_weight: 0.25 },
+    { source: 'BBC Business',      url: 'http://feeds.bbci.co.uk/news/business/rss.xml',             source_weight: 0.22 },
+    { source: 'MarketWatch',       url: 'https://feeds.marketwatch.com/marketwatch/topstories/',     source_weight: 0.20 },
+    { source: 'CNBC',              url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html',     source_weight: 0.20 },
+    { source: 'Yahoo Finance',     url: 'https://finance.yahoo.com/news/rssindex',                   source_weight: 0.18 },
 ];
 
 function detectMacroEventType(title) {
