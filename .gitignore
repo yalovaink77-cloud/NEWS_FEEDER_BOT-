@@ -8,3 +8,6 @@ logs/
 .idea/
 *.sublime-workspace
 *.sublime-project
+
+# Local scratch files
+twitter api
